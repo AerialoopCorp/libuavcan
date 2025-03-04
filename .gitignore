@@ -28,3 +28,6 @@ dsdlc_generated
 
 # Log files
 *.log
+
+.DS_Store
+
