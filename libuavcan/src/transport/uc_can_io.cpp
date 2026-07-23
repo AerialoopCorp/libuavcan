@@ -305,6 +305,15 @@ CanIOManager::CanIOManager(ICanDriver& driver, IPoolAllocator& allocator, ISyste
         tx_queues_[i].construct<IPoolAllocator&, ISystemClock&, std::size_t>
         (allocator, sysclock, mem_blocks_per_iface);
     }
+
+    // Default every interface to the standard UAVCAN protocol. Interfaces that use a custom
+    // protocol (e.g. KDECAN) are reassigned via changeIfaceProtocol(). Without this, nodes that
+    // never call changeIfaceProtocol() (such as the dynamic node ID allocation sub-node) would
+    // read uninitialized protocols and drop UAVCAN frames.
+    for (int i = 0; i < MaxCanIfaces; i++)
+    {
+        iface_protocol_[i] = Protocol::Standard;
+    }
 }
 
 bool CanIOManager::changeIfaceProtocol(unsigned ifaceId, Protocol protocol)
